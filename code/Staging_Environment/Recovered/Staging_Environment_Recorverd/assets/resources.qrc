@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/">
+        <file>down-arrow.png</file>
         <file>Logo.svg</file>
+        <file>left-arrow.png</file>
+        <file>right-arrow.png</file>
+        <file>up-arrow.png</file>
     </qresource>
 </RCC>

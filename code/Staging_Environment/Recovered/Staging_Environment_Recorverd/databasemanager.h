@@ -13,7 +13,7 @@ public:
 
     DatabaseManager();
     QSqlDatabase getDatabase() const;
-
+    bool createBackup(const QString& backupFilePath);
     ~DatabaseManager();
 };
 

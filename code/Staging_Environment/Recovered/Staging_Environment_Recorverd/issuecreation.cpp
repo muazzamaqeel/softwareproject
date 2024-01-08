@@ -46,8 +46,8 @@ void IssueCreation::TaskCheck(int state)
 
 void IssueCreation::BackToMain()
 {
-    hide();
     MainWindow* mainWindow = new MainWindow;
+    hide();
     mainWindow->showMaximized();
     IssueCreation::~IssueCreation();
 }

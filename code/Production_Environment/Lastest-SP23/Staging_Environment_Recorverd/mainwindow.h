@@ -17,9 +17,12 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QString password;
+    QString username;
 
 public slots:
     void openIssueWindow();
+    void userEncryptedLogin();
 
 public slots:
     void openRegistrationWindow();
@@ -31,7 +34,7 @@ public slots:
 
 //temporary - Cosmin
 public slots:
-    void openProjectcreationTest();
+    void adminLogin();
 
 public slots:
     void openParentBoard();

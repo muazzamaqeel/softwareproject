@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "qlineedit.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -14,31 +15,28 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    QLineEdit* getInput_Username();
+    QLineEdit* getInput_Password();
+    QString inputUsername;
+    QString Pass_inputUsername;
+    QString PassUsername();
+
 
 private:
     Ui::MainWindow *ui;
+    QString password;
+    QString username;
 
 public slots:
     void openIssueWindow();
-
-public slots:
+    void userEncryptedLogin();
     void openRegistrationWindow();
-
-public slots:
+    void TeamMember_ProjectsWin();
     void closeApp();
-
-
-
-//temporary - Cosmin
-public slots:
-    void openProjectcreationTest();
-
-public slots:
+    void adminLogin();
     void openParentBoard();
-
-
-
-
+    void onSignInButtonClicked();
+    void setPassUsername(const QString& username);
 private slots:
     void openSettings();
 

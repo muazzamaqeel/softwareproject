@@ -27,8 +27,9 @@ private:
     QString firstName;
     QString lastName;
     QString password;
-    QString role;
+    QString email;
     QString username;
+    QString role;
 
 };
 

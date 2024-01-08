@@ -10,6 +10,10 @@
 #include <QtSql/QSqlError>
 #include <QtSql/QSqlDriver>
 #include <QtSql/QSqlQuery>
+#include <sstream>
+#include <iomanip>
+#include <QCryptographicHash>
+
 
 // Constructor for the registration window
 registration_window::registration_window(QWidget *parent) :
@@ -37,25 +41,38 @@ void registration_window::closeApp()
 // Function to switch from the registration window to the main window
 void registration_window::FromRegToMainWindow()
 {
-    hide(); // Hide the registration window
+
     MainWindow* mainWindow = new MainWindow; // Create a new instance of the main window
+    hide(); // Hide the registration window
     mainWindow->showMaximized(); // Show the main window
+    ui->~registration_window();
 }
+
+
 
 // Function to store user input values and display them for testing
 void registration_window::storeInputValues() {
-
     // Capture user input from various fields
     firstName = ui->input_firstname->text();
     lastName = ui->input_lastname->text();
     password = ui->input_password->text();
-    role = ui->input_role->text();
+    email = ui->input_email->text();
     username = ui->input_username->text();
+    QString selectedOption = ui->comboBox_role->currentText();
+
+    int roleid = -1;
+    if (selectedOption == "Product Owner") {
+        roleid = 2;
+    } else if (selectedOption == "Scrum Master") {
+        roleid = 1;
+    } else if (selectedOption == "Team") {
+        roleid = 3;
+    } else {
+        qDebug() << "Error with the combobox";
+    }
 
     QString error = "";
-
-    // Check for missing fields
-    if(firstName.isEmpty() || lastName.isEmpty()|| password.isEmpty() || role.isEmpty() || username.isEmpty()){
+    if (firstName.isEmpty() || lastName.isEmpty() || password.isEmpty() || email.isEmpty() || username.isEmpty()) {
         if (firstName.isEmpty()) {
             error += "<font color='red'>First Name is missing. </font>\n";
         }
@@ -65,29 +82,40 @@ void registration_window::storeInputValues() {
         if (password.isEmpty()) {
             error += "<font color='red'>Password is missing. </font>\n";
         }
-        if (role.isEmpty()) {
-            error += "<font color='red'>Role is missing. </font>\n";
+        if (email.isEmpty()) {
+            error += "<font color='red'>Email is missing. </font>\n";
         }
         if (username.isEmpty()) {
             error += "<font color='red'>Username is missing. </font>\n";
         }
-
-        // Display error message in the error text object
         ui->display_error->setText(error);
-
-        // Show the error message
         ui->display_error->setVisible(true);
     } else {
-        // Hide the error message if there are no missing fields
         ui->display_error->setVisible(false);
 
-        // Create a DatabaseManager object and attempt to establish a database connection
+        // Hash the password using QCryptographicHash (SHA-256)
+        QByteArray passwordData = password.toUtf8();
+        QByteArray hashedPassword = QCryptographicHash::hash(passwordData, QCryptographicHash::Sha256).toHex();
+
         DatabaseManager database;
         QSqlDatabase dbobj = database.getDatabase();
-
         if (dbobj.isOpen()) {
-            qDebug() << "Connection Established - Registration class!";
-            dbobj.close(); // Close the database connection
+            QSqlQuery query(dbobj);
+            query.prepare("INSERT INTO User (firstname, lastname, password, email, username, Role_idRole) "
+                          "VALUES (:firstname, :lastname, :password, :email, :username, :roleid)");
+            query.bindValue(":firstname", firstName);
+            query.bindValue(":lastname", lastName);
+            query.bindValue(":password", hashedPassword); // using hashed password
+            query.bindValue(":email", email);
+            query.bindValue(":username", username);
+            query.bindValue(":roleid", roleid);
+
+            if (query.exec()) {
+                qDebug() << "Data inserted into User table successfully!";
+            } else {
+                qDebug() << "Failed to insert data into User table:" << query.lastError().text();
+            }
+            dbobj.close();
         } else {
             qDebug() << "Connection Not Established - Registration class!";
         }

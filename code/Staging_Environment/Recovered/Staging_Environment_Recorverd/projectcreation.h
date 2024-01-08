@@ -15,6 +15,9 @@ public:
     explicit ProjectCreation(QWidget *parent = nullptr);
     ~ProjectCreation();
 
+public slots:
+    void openProjectsAdmin();
+
 private:
     Ui::ProjectCreation *ui;
 
